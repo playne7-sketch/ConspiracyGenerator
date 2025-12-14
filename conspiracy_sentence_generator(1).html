@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conspiracy Theory Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .sentence-display {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 1.3em;
+            line-height: 1.6;
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .sentence-display:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(245, 87, 108, 0.4);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        .clear-btn {
+            background: linear-gradient(135deg, #f5576c 0%, #f093fb 100%);
+        }
+
+        .clear-btn:hover {
+            box-shadow: 0 8px 25px rgba(245, 87, 108, 0.6);
+        }
+
+        .history-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .history-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .history-list {
+            list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .word-banks-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .word-banks-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .word-bank {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .word-bank h3 {
+            color: #764ba2;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .word-bank-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .word-tag {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            box-shadow: 0 2px 5px rgba(102, 126, 234, 0.3);
+        }
+
+        .toggle-banks-btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            margin-bottom: 15px;
+        }
+
+        .toggle-banks-btn:hover {
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.6);
+        }
+
+        .word-banks-content {
+            display: none;
+        }
+
+        .word-banks-content.show {
+            display: block;
+        }
+
+        .counter {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        /* Scrollbar styling */
+        .history-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .history-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb:hover {
+            background: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎲 Conspiracy Theory Generator</h1>
+        <p class="subtitle">This is only for generating conspiracy theories for a class assignment. Do not use this for any activities beyond class.</p>
+
+        <div class="sentence-display" id="sentenceText">
+            Click "Generate" to create a sentence
+        </div>
+
+        <div class="button-group">
+            <button id="generateBtn">Generate Sentence</button>
+            <button class="clear-btn" id="clearBtn">Clear History</button>
+            <button class="toggle-banks-btn" id="toggleBanksBtn">View Word Banks</button>
+        </div>
+
+        <div class="word-banks-section" id="wordBanksSection">
+            <div class="word-banks-content" id="wordBanksContent">
+                <div class="word-bank">
+                    <h3>📋 Subjects (53 items)</h3>
+                    <div class="word-bank-list" id="subjectsList"></div>
+                </div>
+                <div class="word-bank">
+                    <h3>⚡ Actions (50 items)</h3>
+                    <div class="word-bank-list" id="actionsList"></div>
+                </div>
+                <div class="word-bank">
+                    <h3>🎯 Objects (48 items)</h3>
+                    <div class="word-bank-list" id="objectsList"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="history-section">
+            <h2>📜 Recent Sentences</h2>
+            <ul class="history-list" id="historyList">
+                <li class="empty-message">No sentences generated yet</li>
+            </ul>
+        </div>
+
+        <div class="counter" id="counter">
+            Total sentences generated: 0
+        </div>
+    </div>
+
+    <script>
+        // Word banks
+        const subjects = [
+            "Elon Musk",
+            "Paw Patrol",
+            "The local hairdresser Mandy",
+            "The man who whistles",
+            "Taylor Swift",
+            "Former President Biden",
+            "A very famous vaccine producer",
+            "Greta Thunberg",
+            "The moon",
+            "A homeopath from Raleigh",
+            "A clone of Vladimir Putin",
+            "Hunter Biden",
+            "A rightwing extremist leftist",
+            "Angela Merkel",
+            "Julius Ceasar",
+            "An influencer from Dubai",
+            "The French Mafia",
+            "The New York Yankees",
+            "CNN",
+            "AI",
+            "Kamala Harris",
+            "A leftist alien",
+            "Madonna",
+            "Oprah",
+            "The TikTok algorithm",
+            "Stalin",
+            "Gen Z",
+            "Boomers",
+            "Gen X",
+            "Millenials",
+            "Gen Alpha",
+            "Elvis Presley",
+            "Celine Dion",
+            "A very greedy Texan",
+            "Antifa",
+            "Axl Rose",
+            "Ted Cruz",
+            "Meghan Markle's father",
+            "Mickey Mouse",
+            "Frosted Flakes",
+            "Bruce Springsteen",
+            "TIME magazine",
+            "John Smith from Durham",
+            "A prince from Nigeria",
+            "Immanuel Kant",
+            "Ryan Seacrest",
+            "The inner-circle of the Kardashian family",
+            "An unprogramed windmill",
+            "The owner of the cafe at the edge of the world",
+            "Bill Belichick",
+            "A deranged vacuum cleaning robot",
+            "The traffic light"
+        ];
+
+        const actions = [
+            "is financing climate activists",
+            "sold the Eiffel Tower to China",
+            "is the secret head of QANON",
+            "lives every day as if it could be his last",
+            "set up a troll farm to manipulate the US election",
+            "banned the sharing of Netflix accounts",
+            "and now no one claims to have known",
+            "wants to introduce gender-neutral language into the constitution",
+            "allegedly financed Brexit",
+            "seems to have been responsible for global warming",
+            "is brainwashing people",
+            "secured millions of dollars on Shark Tank",
+            "developed chemtrails",
+            "wants to ban meat from supermarkets",
+            "took over the body of the German chancellor",
+            "is keeping the location of the stolen Louvre jewels secret",
+            "controls the Green Party",
+            "wants to overthrow Luxembourg",
+            "is responsible for all the German trains being late",
+            "controls the thoughts of Bill Gates",
+            "started the First World War",
+            "is instrumentalizing the Democratic Party",
+            "made up climate change",
+            "developed the first lizard man in vitro",
+            "is actually behind the group BTS",
+            "is a role played by Tom Hanks",
+            "can't do anything about it now",
+            "spraypaints walls as Banksy",
+            "is selling the Bermuda Triangle on Amazon",
+            "discovered that you can rewind cassettes with a pencil",
+            "has been living in Area 51 for 70 years",
+            "markets himself/herself as a life coach on LinkedIn",
+            "is living under a pseudonym in Latin America",
+            "built the Gizeh pyramids together with the aliens",
+            "only likes red Skittles",
+            "is raising poisonous puffer fish",
+            "found the last digit of Pi",
+            "wants Charlotte to be the capital of the US",
+            "is waiting for you in your immediate neighborhood",
+            "came up with the weight loss injection",
+            "developed a vaccine preventing men from getting the flu",
+            "sets electric cars on fire",
+            "is demanding a tax on cargo bikes immediately",
+            "is responsible for all the ads for Viagra",
+            "blew up the North Stream pipeline",
+            "is hiding large sums of money in Panama",
+            "is drunk every day",
+            "is developing the most dangerous virus in the world",
+            "wants to ban using Nutella with butter",
+            "wants to abolish cash",
+            "wants a special speeding limit just for vegans"
+        ];
+
+        const objects = [
+            "so that the gold price finally goes through the roof",
+            "just sad",
+            "and you have to ask yourself to what end",
+            "and that's why printer ink is so expensive",
+            "but our government isn't talking about that",
+            "and claims it's all climate propaganda",
+            "and once again Germany has reaped the gains",
+            "you can read all about it on Wikipedia",
+            "just to secure the German asparagus industry",
+            "oh no",
+            "that's why FIFA has so much money",
+            "at least that is what the New York Times said",
+            "but you are not allowed to say things like that nowadays",
+            "and Alex Jones knew it the whole time",
+            "which makes it easy for the woke police",
+            "which had to be demonstrated",
+            "and then just add a dash of salt and wash it down with white wine",
+            "ChatGPT confirmed it",
+            "and Anderson Cooper is involved somehow",
+            "but who cares",
+            "to introduce universal basic income through the backdoor",
+            "of course it is just all by chance",
+            "and of course once again the mainstream media is not reporting about it",
+            "and the officials at PBS are laughing their heads off",
+            "it was on YouTube",
+            "that will have terrible consequences",
+            "because only winners write history",
+            "which is why there are no more plastic bags",
+            "at least that is what my Uber driver said",
+            "and naturally that just strengthens the patriarchy",
+            "that's how you can win the US election",
+            "those are conditions like they were in the Soviet Union",
+            "if the founding fathers knew about that...",
+            "you just have to read between the lines and it will click",
+            "that would be a good topic for Larry King",
+            "but the real question is, what does Peppa Pig have to do with it",
+            "once again you can see how some people let themselves be fooled",
+            "of course the sleeping sheep don't notice",
+            "that was on the title page of the Wall Street Journal",
+            "wake up!",
+            "you just have to follow the money",
+            "well that's what things look like in our modern world",
+            "and that's all being paid for from our tax dollars",
+            "that makes one wish for the good old days",
+            "and Bill Clinton and the French paid for it",
+            "oh the times!",
+            "so that Russia finally loses the war",
+            "that wouldn't have happened if Ronald Reagan was still president"
+        ];
+
+        let sentenceHistory = [];
+        let totalGenerated = 0;
+
+        // Initialize word bank displays
+        function initializeWordBanks() {
+            const subjectsList = document.getElementById('subjectsList');
+            const actionsList = document.getElementById('actionsList');
+            const objectsList = document.getElementById('objectsList');
+
+            subjects.forEach(subject => {
+                const tag = document.createElement('span');
+                tag.className = 'word-tag';
+                tag.textContent = subject;
+                subjectsList.appendChild(tag);
+            });
+
+            actions.forEach(action => {
+                const tag = document.createElement('span');
+                tag.className = 'word-tag';
+                tag.textContent = action;
+                actionsList.appendChild(tag);
+            });
+
+            objects.forEach(obj => {
+                const tag = document.createElement('span');
+                tag.className = 'word-tag';
+                tag.textContent = obj;
+                objectsList.appendChild(tag);
+            });
+        }
+
+        // Generate random sentence
+        function generateSentence() {
+            const subject = subjects[Math.floor(Math.random() * subjects.length)];
+            const action = actions[Math.floor(Math.random() * actions.length)];
+            const object = objects[Math.floor(Math.random() * objects.length)];
+            
+            return `${subject} ${action} ${object}.`;
+        }
+
+        // Update display
+        function updateDisplay(sentence) {
+            const display = document.getElementById('sentenceText');
+            display.textContent = sentence;
+            totalGenerated++;
+            document.getElementById('counter').textContent = `Total sentences generated: ${totalGenerated}`;
+        }
+
+        // Add to history
+        function addToHistory(sentence) {
+            sentenceHistory.unshift(sentence);
+            
+            // Keep only last 10
+            if (sentenceHistory.length > 10) {
+                sentenceHistory.pop();
+            }
+            
+            updateHistoryDisplay();
+        }
+
+        // Update history display
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('historyList');
+            
+            if (sentenceHistory.length === 0) {
+                historyList.innerHTML = '<li class="empty-message">No sentences generated yet</li>';
+                return;
+            }
+
+            historyList.innerHTML = sentenceHistory
+                .map(sentence => `<li class="history-item">${sentence}</li>`)
+                .join('');
+        }
+
+        // Clear all history
+        function clearHistory() {
+            sentenceHistory = [];
+            totalGenerated = 0;
+            updateHistoryDisplay();
+            document.getElementById('sentenceText').textContent = 'Click "Generate" to create a sentence';
+            document.getElementById('counter').textContent = 'Total sentences generated: 0';
+        }
+
+        // Toggle word banks
+        function toggleWordBanks() {
+            const content = document.getElementById('wordBanksContent');
+            const btn = document.getElementById('toggleBanksBtn');
+            
+            if (content.classList.contains('show')) {
+                content.classList.remove('show');
+                btn.textContent = 'View Word Banks';
+            } else {
+                content.classList.add('show');
+                btn.textContent = 'Hide Word Banks';
+            }
+        }
+
+        // Event listeners
+        document.getElementById('generateBtn').addEventListener('click', () => {
+            const sentence = generateSentence();
+            updateDisplay(sentence);
+            addToHistory(sentence);
+        });
+
+        document.getElementById('clearBtn').addEventListener('click', clearHistory);
+        document.getElementById('toggleBanksBtn').addEventListener('click', toggleWordBanks);
+
+        // Generate on Enter key
+        document.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const sentence = generateSentence();
+                updateDisplay(sentence);
+                addToHistory(sentence);
+            }
+        });
+
+        // Initialize
+        initializeWordBanks();
+    </script>
+</body>
+</html>
